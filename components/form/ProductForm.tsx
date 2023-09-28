@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Button from "../Button";
 import Input from "../Input";
 import { FieldValues, useForm } from "react-hook-form";
+import Modal from "../Modal";
 
 interface ProductFormProps {
   units: any;
@@ -10,6 +12,23 @@ interface ProductFormProps {
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState("");
+  const [categoryList, setCategoryList] = useState(categories);
+  const [unitList, setUnitList] = useState(units);
+
+  const addCategoryToList = (newCategory: any) => {
+    setCategoryList((prevCategories: any) => [...prevCategories, newCategory]);
+  };
+
+  const addUnitToList = (newUnit: any) => {
+    setUnitList((prevUnits: any) => [...prevUnits, newUnit]);
+  };
+
+  useEffect(() => {
+    setCategoryList(categories);
+    setUnitList(units);
+  }, [categories, units]);
 
   const {
     register,
@@ -18,12 +37,45 @@ const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
   } = useForm<FieldValues>();
 
   const onSubmit = (data: any) => {
+    data.price = parseInt(data.price)
+    data.quantity = parseInt(data.quantity)
     console.log(data);
   };
+
+  const handleCategorySelectChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    if (e.target.value === "AddCategory") {
+      setShowModal(true);
+      setModalType("Category");
+      e.target.value = "";
+    }
+  };
+
+  const handleUnitSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === "AddUnit") {
+      setShowModal(true);
+      setModalType("Unit");
+      e.target.value = "";
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalType("");
+  };
+
+  const handleBackgroundClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+      
+    }
+  };
+
   return (
     <div className="">
       <form
-        onSubmit={handleSubmit((data) => onSubmit(data))}
+        onSubmit={handleSubmit(onSubmit)}
         className="w-[500px] flex flex-col gap-8"
         id="productform"
       >
@@ -60,21 +112,17 @@ const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
           errors={errors}
         />
         <div className="w-full flex justify-between items-center gap-4">
-          <p className="font-semibold w-[40%]">Unit</p>
+          <p className="font-semibold">Unit</p>
           <select
             {...register("unit")}
-            className="border h-full w-[25%] p-2 text-center"
-            onChange={(e) => {
-              if (e.target.value === "AddUnit") {
-                // tambah unit
-              }
-            }}
+            className="border h-full w-[40%] p-2 text-center"
+            onChange={handleUnitSelectChange}
             required
           >
             <option value="">
               Select
             </option>
-            {units.map((unit: any) => (
+            {unitList.map((unit: any) => (
               <option key={unit.id} value={unit.name}>
                 {unit.name}
               </option>
@@ -87,17 +135,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
           <select
             {...register("category")}
             className="border h-full w-[40%] p-2 text-center"
-            onChange={(e) => {
-              if (e.target.value === "AddCategory") {
-                // tambah kategory
-              }
-            }}
+            onChange={handleCategorySelectChange}
             required
           >
             <option value="">
               Select
             </option>
-            {categories.map((category: any) => (
+            {categoryList.map((category: any) => (
               <option key={category.id} value={category.name}>
                 {category.name}
               </option>
@@ -107,6 +151,21 @@ const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
         </div>
         <Button label="Save" onClick={() => {}} />
       </form>
+      {showModal && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)]"
+          onClick={handleBackgroundClick}
+        >
+          <Modal
+            title={modalType}
+            onClose={closeModal}
+            onSave={
+              modalType === "Category" ? addCategoryToList : addUnitToList
+            }
+            id={modalType.toLowerCase()}
+          />
+        </div>
+      )}
     </div>
   );
 };
