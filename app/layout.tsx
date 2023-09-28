@@ -2,7 +2,6 @@ import Navbar from "@/components/navbar";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
-import Container from "@/components/container";
 
 const font = Montserrat({ subsets: ["latin"] });
 
@@ -18,9 +17,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={font.className}>
+      <body className={`${font.className} bg-color4`}>
         <Navbar />
-        <Container>{children}</Container>
+        <div className="h-screen mx-4 pt-12">
+          {children}
+        </div>
       </body>
     </html>
   );

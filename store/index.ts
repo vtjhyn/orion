@@ -1,10 +1,13 @@
-// store/store.ts
-import { configureStore } from '@reduxjs/toolkit';
+'use client'
 
-const store = configureStore({
+import { configureStore } from '@reduxjs/toolkit';
+import unitsReducer from './slice/unitsSlice';
+
+export const store = configureStore({
   reducer: {
-    // Definisi slicers di sini
+    units: unitsReducer,
   },
 });
 
-export default store;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

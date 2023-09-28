@@ -1,6 +1,9 @@
-const InventoryPage = () => {
+const InventoryPage = async() => {
+
   return ( 
-    <div>Inventory</div>
+    <div>
+      Inventory
+    </div>
    );
 }
  

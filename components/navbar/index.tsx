@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   const router = useRouter();
   return (
-    <nav className="fixed w-full z-10 bg-purple-300/80">
+    <nav className="fixed w-full z-10 bg-color1 text-white">
       <div className="h-[45px] flex justify-between items-center border-b px-4 font-semibold">
         <div onClick={() => router.push("/")} className="cursor-pointer">
           <p className="text-xl">Orion</p>

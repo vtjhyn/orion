@@ -13,15 +13,14 @@ const NavMenu = () => {
   return (
     <div className="relative">
       <div className="flex gap-8 items-center">
-        <div>
-          <ClockCircleOutlined className="text-[20px] cursor-pointer" />
-        </div>
-        <div onClick={toggleOpen}>
-          <UserOutlined className="text-[20px] cursor-pointer" />
-        </div>
+        <ClockCircleOutlined className="text-[16px] cursor-pointer" />
+        <UserOutlined
+          className="text-[16px] cursor-pointer"
+          onClick={toggleOpen}
+        />
       </div>
       {isOpen && (
-        <div className="absolute border w-[150px] right-0 top-8 font-normal text-center">
+        <div className="absolute border w-[150px] right-0 top-8 font-normal text-center text-black">
           <NavMenuItem label="My Profile" />
           <NavMenuItem label="Logout" />
         </div>

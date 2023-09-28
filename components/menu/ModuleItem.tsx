@@ -16,10 +16,10 @@ const ModuleItem: React.FC<ModuleItemProps> = ({
   }) => {
   const router = useRouter();
   return (
-    <div className="h-[110px] w-[110px] flex flex-col justify-center items-center gap-2 cursor-pointer hover:bg-purple-100/70  hover:shadow-md hover:scale-105"
+    <div className="h-[110px] w-[110px] flex flex-col justify-center items-center gap-2 cursor-pointer hover:bg-color3/20  hover:shadow-md hover:scale-105"
     onClick={() => router.push(path)}
     >
-      <div className="h-[60px] w-[60px] border flex flex-col justify-center items-center rounded-md border-black text-purple-600">
+      <div className="h-[60px] w-[60px] border flex flex-col justify-center items-center rounded-md border-black text-color2">
         <Icon
           component={icon as React.ForwardRefExoticComponent<any>}
           style={{ fontSize: "25px" }}
