@@ -9,6 +9,7 @@ const InventoryPage =  () => {
   const ref = useRef(false);
   const { data,isLoading } = useSelector((state: RootState) => state.product)
   const dispatch = useDispatch<AppDispatch>();
+  console.log(data)
 
   useEffect(() => {
     if(ref.current === false) {
@@ -28,7 +29,7 @@ const InventoryPage =  () => {
             <div>Deskripsi : {data.description}</div>
             <div>Harga : {data.price}</div>
             <div>Jumlah : {data.quantity} <span>{data.unit.name}</span></div>
-            {/* <div>Kategori : {data.category.name}</div> */}
+            <div>Kategori : {data.category.name}</div>
             </div>
         ))
       )}

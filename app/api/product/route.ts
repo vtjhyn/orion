@@ -34,7 +34,7 @@ export async function GET(request: Request) {
   const products = await prisma.product.findMany({
     include: {
       unit: true,
-
+      category: true
     },
   });
   return NextResponse.json(products);

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, SerializedError } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface CategoryProps {
@@ -30,11 +30,29 @@ export const addCategory = createAsyncThunk<CategoryProps, Partial<CategoryProps
   }
 );
 
-const initialState = {
-  data: [] as CategoryProps[],
+export const editCategory = createAsyncThunk<CategoryProps, Partial<CategoryProps>>(
+  "category/editCategory",
+  async (item, thunkAPI) => {
+    try {
+      const response = await axios.put("/api/category", {name: item});
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+)
+
+interface CategoryStateProps {
+  data: CategoryProps[];
+  isLoading: boolean;
+  error: string | undefined;
+}
+
+const initialState: CategoryStateProps = {
+  data: [],
   isLoading: false,
-  error: null,
-} as any;
+  error: undefined,
+}
 
 const categorySlice = createSlice({
   name: "category",
@@ -55,12 +73,23 @@ const categorySlice = createSlice({
     })
     .addCase(addCategory.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.data = action.payload;
+      state.data = [...state.data, action.payload];
     })
     .addCase(addCategory.pending, (state, action) => {
       state.isLoading = true;
     })
     .addCase(addCategory.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message
+    })
+    .addCase(editCategory.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.data = [...state.data, action.payload];
+    })
+    .addCase(editCategory.pending, (state, action) => {
+      state.isLoading = true;
+    })
+    .addCase(editCategory.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message
     })

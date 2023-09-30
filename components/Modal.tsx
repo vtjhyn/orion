@@ -8,9 +8,10 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   id: string;
+  data: CategoryProps[] | UnitProps[];
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, title, id }) => {
+const Modal: React.FC<ModalProps> = ({ onClose, title, id, data }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [value, setValue] = useState("");
 
@@ -42,6 +43,10 @@ const Modal: React.FC<ModalProps> = ({ onClose, title, id }) => {
 
   return (
     <div className="bg-white w-1/3 p-4 rounded-lg">
+      <div>
+        <h1>{title} List</h1>
+        <div>data</div>
+      </div>
       <h2 className="text-xl font-semibold mb-4">Add {title}</h2>
       <input
         type="text"
