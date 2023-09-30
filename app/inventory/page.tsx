@@ -28,7 +28,7 @@ const InventoryPage =  () => {
             <div>Deskripsi : {data.description}</div>
             <div>Harga : {data.price}</div>
             <div>Jumlah : {data.quantity} <span>{data.unit.name}</span></div>
-            <div>Kategori : {data.category.name}</div>
+            {/* <div>Kategori : {data.category.name}</div> */}
             </div>
         ))
       )}

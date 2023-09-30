@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface UnitProps {
+export interface UnitProps {
   id: number;
   name: string;
 }
@@ -22,7 +22,7 @@ export const addUnit = createAsyncThunk<UnitProps, Partial<UnitProps>>(
   "unit/addUnit",
   async (item, thunkAPI) => {
     try {
-      const response = await axios.post("/api/unit", item);
+      const response = await axios.post("/api/unit", {name: item});
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);

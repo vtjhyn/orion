@@ -1,4 +1,5 @@
 import { CategoryProps, addCategory } from "@/store/slice/categorySlice";
+import { UnitProps, addUnit } from "@/store/slice/unitsSlice";
 import { AppDispatch } from "@/store/store";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -26,7 +27,17 @@ const Modal: React.FC<ModalProps> = ({ onClose, title, id }) => {
         console.error("Error saving category:", error);
       });
     }
-
+    if(id === 'unit') {
+      dispatch(addUnit(value as Partial<UnitProps>))
+      .then((result: any) => {
+        console.log("Unit added:", result.payload);
+        // Buat notif
+        onClose();
+      })
+      .catch((error) => {
+        console.error("Error saving unit:", error);
+      });
+    }
   };
 
   return (

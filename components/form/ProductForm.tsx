@@ -18,17 +18,13 @@ const ProductForm = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
-  const [categoryList, setCategoryList] = useState(categories);
-  const [unitList, setUnitList] = useState(units);
+
 
   const dispatch = useDispatch<AppDispatch>();
   const { isLoading } = useSelector((state: RootState) => state.product);
 
 
-  useEffect(() => {
-    setCategoryList(categories);
-    setUnitList(units);
-  }, [categories, units]);
+
 
   useEffect(() => {
     if (ref.current === false) {
@@ -136,7 +132,7 @@ const ProductForm = () => {
             required
           >
             <option value="">Select</option>
-            {unitList.map((unit: any) => (
+            {units.map((unit: any) => (
               <option key={unit.id} value={unit.id}>
                 {unit.name}
               </option>
@@ -153,7 +149,7 @@ const ProductForm = () => {
             required
           >
             <option value="">Select</option>
-            {categoryList.map((category: any) => (
+            {categories.map((category: any) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
