@@ -1,26 +1,32 @@
-import axios from "axios";
+import { CategoryProps, addCategory } from "@/store/slice/categorySlice";
+import { AppDispatch } from "@/store/store";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 interface ModalProps {
   onClose: () => void;
-  onSave: (value: string) => void;
   title: string;
   id: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, onSave, title, id }) => {
+const Modal: React.FC<ModalProps> = ({ onClose, title, id }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [value, setValue] = useState("");
 
   const handleSave = () => {
-    axios
-      .post(`/api/${id}`, { name: value })
-      .then((response) => {
-        onSave(response.data);
+    console.log(value)
+    if(id === 'category') {
+      dispatch(addCategory(value as Partial<CategoryProps>))
+      .then((result: any) => {
+        console.log("Category added:", result.payload);
+        // Buat notif
         onClose();
       })
       .catch((error) => {
         console.error("Error saving category:", error);
       });
+    }
+
   };
 
   return (

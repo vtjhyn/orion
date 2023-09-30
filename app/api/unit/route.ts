@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   return NextResponse.json(unit);
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const units = await prisma.unit.findMany();
   return NextResponse.json(units);
 }

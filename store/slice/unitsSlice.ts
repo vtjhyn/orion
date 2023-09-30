@@ -1,36 +1,70 @@
-"use client";
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export interface Unit {
+interface UnitProps {
   id: number;
   name: string;
 }
 
-export const getUnits = createAsyncThunk<Unit[]>(
-  "units/getUnits",
+export const getUnit = createAsyncThunk<UnitProps[]>(
+  "unit/getUnit",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("/api/unit", {});
+      const response = await axios.get("/api/unit");
       return response.data;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue({
-        message: error.response.data.message,
-      });
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
-const unitsSlice = createSlice({
-  name: "units",
-  initialState: [] as Unit[],
+export const addUnit = createAsyncThunk<UnitProps, Partial<UnitProps>>(
+  "unit/addUnit",
+  async (item, thunkAPI) => {
+    try {
+      const response = await axios.post("/api/unit", item);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+const initialState = {
+  data: [] as UnitProps[],
+  isLoading: false,
+  error: null,
+} as any;
+
+const unitSlice = createSlice({
+  name: "unit",
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getUnits.fulfilled, (state: any, action) => {
-      state.action.payload;
-    });
+    builder
+      .addCase(getUnit.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.data = action.payload;
+      })
+      .addCase(getUnit.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getUnit.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      })
+      .addCase(addUnit.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.data = action.payload;
+      })
+      .addCase(addUnit.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(addUnit.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      });
   },
 });
 
-export default unitsSlice.reducer;
+export default unitSlice.reducer;

@@ -5,30 +5,40 @@ import Button from "../Button";
 import Input from "../Input";
 import { FieldValues, useForm } from "react-hook-form";
 import Modal from "../Modal";
+import { useDispatch, useSelector } from "react-redux";
+import { addProduct } from "@/store/slice/productSlice";
+import { AppDispatch, RootState } from "@/store/store";
+import { getUnit } from "@/store/slice/unitsSlice";
+import { getCategory } from "@/store/slice/categorySlice";
 
-interface ProductFormProps {
-  units: any;
-  categories: any;
-}
+const ProductForm = () => {
+  const { data: units } = useSelector((state: RootState) => state.unit);
+  const { data: categories } = useSelector((state: RootState) => state.category);
+  const ref = useRef(false);
 
-const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [categoryList, setCategoryList] = useState(categories);
   const [unitList, setUnitList] = useState(units);
 
-  const addCategoryToList = (newCategory: any) => {
-    setCategoryList((prevCategories: any) => [...prevCategories, newCategory]);
-  };
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading } = useSelector((state: RootState) => state.product);
 
-  const addUnitToList = (newUnit: any) => {
-    setUnitList((prevUnits: any) => [...prevUnits, newUnit]);
-  };
 
   useEffect(() => {
     setCategoryList(categories);
     setUnitList(units);
   }, [categories, units]);
+
+  useEffect(() => {
+    if (ref.current === false) {
+      dispatch(getUnit());
+      dispatch(getCategory());
+    }
+    return () => {
+      ref.current = true;
+    };
+  }, []);
 
   const {
     register,
@@ -37,9 +47,16 @@ const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
   } = useForm<FieldValues>();
 
   const onSubmit = (data: any) => {
-    data.price = parseInt(data.price)
-    data.quantity = parseInt(data.quantity)
-    console.log(data);
+    data.price = parseInt(data.price);
+    data.quantity = parseInt(data.quantity);
+    dispatch(addProduct(data))
+      .then((result) => {
+        console.log("Product added:", result.payload);
+        // Buat notif
+      })
+      .catch((error) => {
+        console.error("Error adding product:", error);
+      });
   };
 
   const handleCategorySelectChange = (
@@ -68,7 +85,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
   const handleBackgroundClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       closeModal();
-      
     }
   };
 
@@ -114,16 +130,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
         <div className="w-full flex justify-between items-center gap-4">
           <p className="font-semibold">Unit</p>
           <select
-            {...register("unit")}
+            {...register("unitId")}
             className="border h-full w-[40%] p-2 text-center"
             onChange={handleUnitSelectChange}
             required
           >
-            <option value="">
-              Select
-            </option>
+            <option value="">Select</option>
             {unitList.map((unit: any) => (
-              <option key={unit.id} value={unit.name}>
+              <option key={unit.id} value={unit.id}>
                 {unit.name}
               </option>
             ))}
@@ -133,23 +147,25 @@ const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
         <div className="w-full flex justify-between items-center gap-4">
           <p className="font-semibold w-[40%]">Category</p>
           <select
-            {...register("category")}
+            {...register("categoryId")}
             className="border h-full w-[40%] p-2 text-center"
             onChange={handleCategorySelectChange}
             required
           >
-            <option value="">
-              Select
-            </option>
+            <option value="">Select</option>
             {categoryList.map((category: any) => (
-              <option key={category.id} value={category.name}>
+              <option key={category.id} value={category.id}>
                 {category.name}
               </option>
             ))}
             <option value="AddCategory">Add Category</option>
           </select>
         </div>
-        <Button label="Save" onClick={() => {}} />
+        <Button
+          label="Save"
+          onClick={() => {}}
+          disabled={isLoading ? true : false}
+        />
       </form>
       {showModal && (
         <div
@@ -159,9 +175,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ units, categories }) => {
           <Modal
             title={modalType}
             onClose={closeModal}
-            onSave={
-              modalType === "Category" ? addCategoryToList : addUnitToList
-            }
             id={modalType.toLowerCase()}
           />
         </div>

@@ -1,11 +1,15 @@
 'use client'
 
 import { configureStore } from '@reduxjs/toolkit';
-import unitsReducer from './slice/unitsSlice';
+import unitReducer from './slice/unitsSlice';
+import productReducer from './slice/productSlice';
+import categoryReducer from './slice/categorySlice'
 
 export const store = configureStore({
   reducer: {
-    units: unitsReducer,
+    product: productReducer,
+    unit: unitReducer,
+    category: categoryReducer,
   },
 });
 
