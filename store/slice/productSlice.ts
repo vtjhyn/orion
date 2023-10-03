@@ -11,7 +11,7 @@ interface ProductProps {
   categoryId: string;
   createdAt: Date;
   updatedAt: Date;
-  unit: {
+  unit  : {
     id: string;
     name: string;
   };
@@ -45,11 +45,17 @@ export const addProduct = createAsyncThunk<ProductProps, Partial<ProductProps>>(
   }
 )
 
-const initialState = {
-  data: [] as ProductProps[],
+interface ProductStateProps {
+  data: ProductProps[];
+  isLoading: boolean;
+  error: string | undefined;
+}
+
+const initialState: ProductStateProps = {
+  data: [],
   isLoading: false,
-  error: null,
-} as any;
+  error: undefined,
+};
 
 const productSlice = createSlice({
   name: "product",
@@ -70,7 +76,7 @@ const productSlice = createSlice({
     })
     .addCase(addProduct.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.data = action.payload;
+      state.data = [...state.data, action.payload];
     })
     .addCase(addProduct.pending, (state, action) => {
       state.isLoading = true;

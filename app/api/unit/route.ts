@@ -18,3 +18,5 @@ export async function GET(request: Request) {
   const units = await prisma.unit.findMany();
   return NextResponse.json(units);
 }
+
+

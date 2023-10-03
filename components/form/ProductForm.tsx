@@ -8,8 +8,8 @@ import Modal from "../Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "@/store/slice/productSlice";
 import { AppDispatch, RootState } from "@/store/store";
-import { getUnit } from "@/store/slice/unitsSlice";
-import { getCategory } from "@/store/slice/categorySlice";
+import { UnitProps, getUnit } from "@/store/slice/unitsSlice";
+import { CategoryProps, getCategory } from "@/store/slice/categorySlice";
 import { SettingOutlined } from "@ant-design/icons";
 
 const ProductForm = () => {
@@ -23,6 +23,8 @@ const ProductForm = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
+  const [data, setData] = useState<UnitProps[] | CategoryProps[]>();
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const { isLoading } = useSelector((state: RootState) => state.product);
@@ -56,22 +58,17 @@ const ProductForm = () => {
       });
   };
 
-  const handleCategorySelectChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    if (e.target.value === "AddCategory") {
-      setShowModal(true);
-      setModalType("Category");
-      e.target.value = "";
-    }
+  const handleUnitSelectChange = (e: React.MouseEvent<HTMLDivElement>) => {
+    setShowModal(true);
+    setModalType("Unit");
+    setData(units)
+    setLoading(unitLoading)
   };
 
-  const handleUnitSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value === "AddUnit") {
-      setShowModal(true);
-      setModalType("Unit");
-      e.target.value = "";
-    }
+  const handleCategorySelectChange = (e: React.MouseEvent<HTMLDivElement>) => {
+    setShowModal(true);
+    setModalType("Category");
+    setData(categories);
   };
 
   const closeModal = () => {
@@ -133,7 +130,6 @@ const ProductForm = () => {
               <select
                 {...register("unitId")}
                 className="border h-full w-full p-2 text-center"
-                onChange={handleUnitSelectChange}
                 required
               >
                 <option value="">Select</option>
@@ -142,9 +138,8 @@ const ProductForm = () => {
                     {unit.name}
                   </option>
                 ))}
-                <option value="AddUnit">Add Unit</option>
               </select>
-              <div>
+              <div onClick={handleUnitSelectChange}>
                 <SettingOutlined className="hover:cursor-pointer hover:scale-110" />
               </div>
             </div>
@@ -155,7 +150,6 @@ const ProductForm = () => {
               <select
                 {...register("categoryId")}
                 className="border h-full w-full p-2 text-center"
-                onChange={handleCategorySelectChange}
                 required
               >
                 <option value="">Select</option>
@@ -164,9 +158,10 @@ const ProductForm = () => {
                     {category.name}
                   </option>
                 ))}
-                <option value="AddCategory">Add Category</option>
               </select>
-              <SettingOutlined className="hover:cursor-pointer hover:scale-110" />
+              <div onClick={handleCategorySelectChange}>
+                <SettingOutlined className="hover:cursor-pointer hover:scale-110" />
+              </div>
             </div>
           </div>
           <Button
@@ -186,7 +181,8 @@ const ProductForm = () => {
             title={modalType}
             onClose={closeModal}
             id={modalType.toLowerCase()}
-            data={units}
+            data={data}
+            loading={loading}
           />
         </div>
       )}

@@ -32,15 +32,29 @@ export const addUnit = createAsyncThunk<UnitProps, Partial<UnitProps>>(
 
 export const editUnit = createAsyncThunk<UnitProps, Partial<UnitProps>>(
   "unit/editUnit",
-  async(item, thunkAPI) => {
+  async (item, thunkAPI) => {
     try {
-      const response = await axios.put("/api/unit", { name: item });
+      const response = await axios.post(`/api/unit/${item.id}`, {
+        name: item.name,
+      });
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
     }
   }
-)
+);
+
+export const deleteUnit = createAsyncThunk<UnitProps, Partial<UnitProps>>(
+  "unit/deleteUnit",
+  async (item, thunkAPI) => {
+    try {
+      const response = await axios.delete(`/api/unit/${item.id}`);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 interface UnitStateProps {
   data: UnitProps[];
@@ -84,7 +98,11 @@ const unitSlice = createSlice({
       })
       .addCase(editUnit.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = [...state.data, action.payload];
+        const updatedUnit = action.payload;
+        const updatedData = state.data.map((unit) =>
+          unit.id === updatedUnit.id ? updatedUnit : unit
+        );
+        state.data = updatedData;
       })
       .addCase(editUnit.pending, (state, action) => {
         state.isLoading = true;
@@ -93,6 +111,18 @@ const unitSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message;
       })
+      .addCase(deleteUnit.fulfilled, (state, action) => {
+        state.isLoading = false;
+        // Update the state by removing the deleted unit
+        state.data = state.data.filter(unit => unit.id !== action.payload.id);
+      })
+      .addCase(deleteUnit.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteUnit.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      });
   },
 });
 

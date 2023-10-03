@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, SerializedError } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface CategoryProps {
@@ -34,7 +34,19 @@ export const editCategory = createAsyncThunk<CategoryProps, Partial<CategoryProp
   "category/editCategory",
   async (item, thunkAPI) => {
     try {
-      const response = await axios.put("/api/category", {name: item});
+      const response = await axios.post(`/api/category/${item.id}`, {name: item.name});
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+)
+
+export const deleteCategory = createAsyncThunk<CategoryProps, Partial<CategoryProps>>(
+  "category/deleteCategory",
+  async (item, thunkAPI) => {
+    try {
+      const response = await axios.delete(`/api/category/${item.id}`);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
@@ -84,7 +96,11 @@ const categorySlice = createSlice({
     })
     .addCase(editCategory.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.data = [...state.data, action.payload];
+        const updatedCategory = action.payload;
+        const updatedData = state.data.map((category) =>
+          category.id === updatedCategory.id ? updatedCategory : category
+        );
+        state.data = updatedData;
     })
     .addCase(editCategory.pending, (state, action) => {
       state.isLoading = true;
@@ -93,6 +109,18 @@ const categorySlice = createSlice({
       state.isLoading = false;
       state.error = action.error.message
     })
+    .addCase(deleteCategory.fulfilled, (state, action) => {
+      state.isLoading = false;
+      // Update the state by removing the deleted unit
+      state.data = state.data.filter(category => category.id !== action.payload.id);
+    })
+    .addCase(deleteCategory.pending, (state, action) => {
+      state.isLoading = true;
+    })
+    .addCase(deleteCategory.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
   },
 });
 
