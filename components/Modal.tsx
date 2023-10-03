@@ -146,7 +146,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, title, id, data, loading }) => {
         <input
           type="text"
           className="w-[70%] border p-2 rounded-md"
-          placeholder={`${value}`}
+          placeholder={value}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           required

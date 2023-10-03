@@ -111,7 +111,6 @@ const categorySlice = createSlice({
     })
     .addCase(deleteCategory.fulfilled, (state, action) => {
       state.isLoading = false;
-      // Update the state by removing the deleted unit
       state.data = state.data.filter(category => category.id !== action.payload.id);
     })
     .addCase(deleteCategory.pending, (state, action) => {

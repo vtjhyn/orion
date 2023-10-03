@@ -6,13 +6,13 @@ import Input from "../Input";
 import { FieldValues, useForm } from "react-hook-form";
 import Modal from "../Modal";
 import { useDispatch, useSelector } from "react-redux";
-import { addProduct } from "@/store/slice/productSlice";
+import { ProductProps, addProduct } from "@/store/slice/productSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import { UnitProps, getUnit } from "@/store/slice/unitsSlice";
 import { CategoryProps, getCategory } from "@/store/slice/categorySlice";
 import { SettingOutlined } from "@ant-design/icons";
 
-const ProductForm = () => {
+const EditProductForm = ({productData} : {productData : ProductProps[]}) => {
   const { data: units, isLoading: unitLoading } = useSelector(
     (state: RootState) => state.unit
   );
@@ -190,4 +190,4 @@ const ProductForm = () => {
   );
 };
 
-export default ProductForm;
+export default EditProductForm;

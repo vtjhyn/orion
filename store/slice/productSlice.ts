@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface ProductProps {
+export interface ProductProps {
   id: string;
   name: string;
   description: string | null;
@@ -33,6 +33,19 @@ export const getProduct = createAsyncThunk<ProductProps[]>(
   }
 );
 
+export const getProductById = createAsyncThunk<ProductProps[], Partial<ProductProps>>(
+  "product/getProductById",
+  async(item, thunkAPI) => {
+    try {
+      const response = await axios.get(`/api/product/${item}`)
+      return response.data
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+)
+
+
 export const addProduct = createAsyncThunk<ProductProps, Partial<ProductProps>>(
   "product/addproduct",
   async(item, thunkAPI) => {
@@ -44,6 +57,18 @@ export const addProduct = createAsyncThunk<ProductProps, Partial<ProductProps>>(
     }
   }
 )
+
+export const deleteProduct = createAsyncThunk<ProductProps, Partial<ProductProps>>(
+  "product/deleteProduct",
+  async (item, thunkAPI) => {
+    try {
+      const response = await axios.delete(`/api/product/${item.id}`);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 interface ProductStateProps {
   data: ProductProps[];
@@ -74,6 +99,17 @@ const productSlice = createSlice({
       state.isLoading = false;
       state.error = action.error.message
     })
+    .addCase(getProductById.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.data = action.payload;
+    })
+    .addCase(getProductById.pending, (state, action) => {
+      state.isLoading = true;
+    })
+    .addCase(getProductById.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message
+    })
     .addCase(addProduct.fulfilled, (state, action) => {
       state.isLoading = false;
       state.data = [...state.data, action.payload];
@@ -85,6 +121,17 @@ const productSlice = createSlice({
       state.isLoading = false;
       state.error = action.error.message
     })
+    .addCase(deleteProduct.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.data = state.data.filter(product => product.id !== action.payload.id);
+    })
+    .addCase(deleteProduct.pending, (state, action) => {
+      state.isLoading = true;
+    })
+    .addCase(deleteProduct.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
   },
 });
 
