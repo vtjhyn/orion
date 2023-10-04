@@ -20,14 +20,27 @@ export async function DELETE(request: Request,{ params }: { params: IParams }) {
 export async function POST(request: Request, { params }: { params: IParams }) {
   const { productId } = params;
   const body = await request.json();
-  const { name } = body;
+  const { name, description, price, quantity, unitId, categoryId } = body;
 
   const product = await prisma.product.update({
     where: {
       id: productId,
     },
     data: {
-      name,
+      name:  name,
+      description: description,
+      price: price,
+      quantity: quantity,
+      unit: {
+        connect: {
+          id : unitId,
+        }
+      },
+      category: {
+        connect: {
+          id : categoryId,
+        }
+      },
     },
   });
 

@@ -2,7 +2,12 @@
 
 import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { ProductProps, deleteProduct, getProduct } from "@/store/slice/productSlice";
+import {
+  ProductProps,
+  deleteProduct,
+  getProduct,
+  getProductById,
+} from "@/store/slice/productSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
@@ -28,15 +33,18 @@ const ProductPage = () => {
         console.log("Product Deleted:", result.payload);
         // Buat notif
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.error("Error delete product:", error);
       });
   };
 
   const onEdit = (data: any) => {
-    console.log(data)
-    // router.push(`/inventory/product/${data.id}`)
+    dispatch(getProductById(data.id)).then((result: any) => {
+      router.push(`/inventory/product/${result.payload.id}`);
+    });
   };
+
+  console.log(data);
 
   return (
     <div className="h-full flex-col justify-center items-center">

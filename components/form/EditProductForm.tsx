@@ -6,28 +6,33 @@ import Input from "../Input";
 import { FieldValues, useForm } from "react-hook-form";
 import Modal from "../Modal";
 import { useDispatch, useSelector } from "react-redux";
-import { ProductProps, addProduct } from "@/store/slice/productSlice";
+import { ProductProps, editProduct } from "@/store/slice/productSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import { UnitProps, getUnit } from "@/store/slice/unitsSlice";
 import { CategoryProps, getCategory } from "@/store/slice/categorySlice";
 import { SettingOutlined } from "@ant-design/icons";
 
-const EditProductForm = ({productData} : {productData : ProductProps[]}) => {
+const EditProductForm = ({
+  products,
+  isLoading,
+}: {
+  products: ProductProps[];
+  isLoading: Boolean;
+}) => {
   const { data: units, isLoading: unitLoading } = useSelector(
     (state: RootState) => state.unit
   );
   const { data: categories, isLoading: categoryLoading } = useSelector(
     (state: RootState) => state.category
   );
+
   const ref = useRef(false);
 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [data, setData] = useState<UnitProps[] | CategoryProps[]>();
-  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
-  const { isLoading } = useSelector((state: RootState) => state.product);
 
   useEffect(() => {
     if (ref.current === false) {
@@ -39,30 +44,24 @@ const EditProductForm = ({productData} : {productData : ProductProps[]}) => {
     };
   }, []);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FieldValues>();
-
   const onSubmit = (data: any) => {
     data.price = parseInt(data.price);
     data.quantity = parseInt(data.quantity);
-    dispatch(addProduct(data))
+    data.id = products[0].id;
+    dispatch(editProduct(data))
       .then((result) => {
-        console.log("Product added:", result.payload);
+        console.log("Product edited:", result.payload);
         // Buat notif
       })
       .catch((error) => {
-        console.error("Error adding product:", error);
+        console.error("Error edit product:", error);
       });
   };
 
   const handleUnitSelectChange = (e: React.MouseEvent<HTMLDivElement>) => {
     setShowModal(true);
     setModalType("Unit");
-    setData(units)
-    setLoading(unitLoading)
+    setData(units);
   };
 
   const handleCategorySelectChange = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -82,9 +81,24 @@ const EditProductForm = ({productData} : {productData : ProductProps[]}) => {
     }
   };
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FieldValues>({
+    defaultValues: {
+      name: products[0]?.name,
+      description: products[0]?.description,
+      price: products[0]?.price,
+      quantity: products[0]?.quantity,
+      unitId: products[0]?.unitId,
+      categoryId: products[0]?.categoryId,
+    },
+  });
+
   return (
     <div className="">
-      {unitLoading || categoryLoading ? (
+      {unitLoading || categoryLoading || isLoading ? (
         <p>Loading...</p>
       ) : (
         <form
@@ -182,7 +196,6 @@ const EditProductForm = ({productData} : {productData : ProductProps[]}) => {
             onClose={closeModal}
             id={modalType.toLowerCase()}
             data={data}
-            loading={loading}
           />
         </div>
       )}

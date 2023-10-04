@@ -10,10 +10,10 @@ interface ModalProps {
   title: string;
   id: string;
   data: CategoryProps[] | UnitProps[] | undefined;
-  loading: boolean;
+
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, title, id, data, loading }) => {
+const Modal: React.FC<ModalProps> = ({ onClose, title, id, data }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [mode, setMode] = useState("");
   const [value, setValue] = useState("");

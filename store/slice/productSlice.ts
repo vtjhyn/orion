@@ -33,12 +33,12 @@ export const getProduct = createAsyncThunk<ProductProps[]>(
   }
 );
 
-export const getProductById = createAsyncThunk<ProductProps[], Partial<ProductProps>>(
+export const getProductById = createAsyncThunk<ProductProps, string>(
   "product/getProductById",
   async(item, thunkAPI) => {
     try {
       const response = await axios.get(`/api/product/${item}`)
-      return response.data
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -57,6 +57,18 @@ export const addProduct = createAsyncThunk<ProductProps, Partial<ProductProps>>(
     }
   }
 )
+
+export const editProduct = createAsyncThunk<ProductProps, Partial<ProductProps>>(
+  "product/editProduct",
+  async (item, thunkAPI) => {
+    try {
+      const response = await axios.post(`/api/product/${item.id}`, item);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 export const deleteProduct = createAsyncThunk<ProductProps, Partial<ProductProps>>(
   "product/deleteProduct",
@@ -101,7 +113,7 @@ const productSlice = createSlice({
     })
     .addCase(getProductById.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.data = action.payload;
+      state.data = [action.payload]
     })
     .addCase(getProductById.pending, (state, action) => {
       state.isLoading = true;
@@ -120,6 +132,17 @@ const productSlice = createSlice({
     .addCase(addProduct.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message
+    })
+    .addCase(editProduct.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.data = state.data.filter(product => product.id !== action.payload.id);
+    })
+    .addCase(editProduct.pending, (state, action) => {
+      state.isLoading = true;
+    })
+    .addCase(editProduct.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
     })
     .addCase(deleteProduct.fulfilled, (state, action) => {
       state.isLoading = false;

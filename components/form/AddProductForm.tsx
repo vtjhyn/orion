@@ -182,7 +182,7 @@ const AddProductForm = () => {
             onClose={closeModal}
             id={modalType.toLowerCase()}
             data={data}
-            loading={loading}
+
           />
         </div>
       )}
