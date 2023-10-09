@@ -1,9 +1,11 @@
 "use client";
 
+import { UserProps } from "@/store/slice/userSlice";
 import NavMenu from "./NavMenu";
 import { useRouter } from "next/navigation";
 
-const Navbar = () => {
+
+const Navbar = ({ currentUser } : {currentUser : UserProps}) => {
   const router = useRouter();
   return (
     <nav className="fixed w-full z-10 bg-color1 text-white">
@@ -11,7 +13,9 @@ const Navbar = () => {
         <div onClick={() => router.push("/")} className="cursor-pointer">
           <p className="text-xl">Orion</p>
         </div>
-        <NavMenu />
+        <NavMenu
+          currentUser={currentUser}
+        />
       </div>
     </nav>
   );

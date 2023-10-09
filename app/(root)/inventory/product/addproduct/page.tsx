@@ -1,9 +1,9 @@
-import AddProductForm from "@/components/form/AddProductForm";
+import AddOrderForm from "@/components/form/AddOrderForm";
 
 const AddProductPage = () => {
   return (
     <div className="h-full flex justify-center items-center">
-      <AddProductForm />
+      <AddOrderForm />
     </div>
   );
 };

@@ -3,8 +3,10 @@
 import { ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import NavMenuItem from "./NavMenuItem";
+import { UserProps } from "@/store/slice/userSlice";
+import { signOut } from "next-auth/react";
 
-const NavMenu = () => {
+const NavMenu = ({ currentUser } : {currentUser : UserProps}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = () => {
@@ -21,8 +23,15 @@ const NavMenu = () => {
       </div>
       {isOpen && (
         <div className="absolute border w-[150px] right-0 top-8 font-normal text-center text-black">
-          <NavMenuItem label="My Profile" />
-          <NavMenuItem label="Logout" />
+          {currentUser && (
+            <>
+              <NavMenuItem label={currentUser.role.name} />
+              <NavMenuItem label="My Profile" />
+              <NavMenuItem label="Logout" 
+                onClick={() => signOut()}
+              />
+            </>
+          )}
         </div>
       )}
     </div>

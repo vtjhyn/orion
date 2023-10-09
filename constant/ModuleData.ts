@@ -60,6 +60,6 @@ export const moduleData = [
   {
     name: "SETTING",
     icon: SettingFilled,
-    path: "/settings",
+    path: "/setting",
   },
 ];

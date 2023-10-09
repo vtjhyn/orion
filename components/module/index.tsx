@@ -3,7 +3,7 @@
 import ModuleItem from "./ModuleItem";
 import { moduleData } from "../../constant/ModuleData";
 
-const Menu = () => {
+const Module = () => {
   return (
     <div className="grid xl:grid-cols-6 md:grid-cols-4 grid-cols-3 justify-items-center content-center gap-x-6 gap-y-4">
       {moduleData.map((module, index) => (
@@ -19,4 +19,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default Module;

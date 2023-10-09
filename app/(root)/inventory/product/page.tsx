@@ -17,6 +17,7 @@ const ProductPage = () => {
   const ref = useRef(false);
   const { data, isLoading } = useSelector((state: RootState) => state.product);
   const dispatch = useDispatch<AppDispatch>();
+  
 
   useEffect(() => {
     if (ref.current === false) {

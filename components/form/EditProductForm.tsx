@@ -137,6 +137,7 @@ const EditProductForm = ({
             disabled={false}
             register={register}
             errors={errors}
+            required
           />
           <div className="w-full flex justify-between items-center gap-4">
             <p className="font-semibold">Unit</p>
