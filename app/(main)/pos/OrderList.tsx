@@ -1,6 +1,6 @@
 const OrderList = () => {
   return ( 
-    <div>
+    <div className="w-full">
       <div>Order Item</div>
       <div>Order Summary</div>
       <div>Order Pads</div>

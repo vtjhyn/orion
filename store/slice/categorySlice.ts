@@ -30,11 +30,17 @@ export const addCategory = createAsyncThunk<CategoryProps, Partial<CategoryProps
   }
 );
 
-const initialState = {
-  data: [] as CategoryProps[],
+interface StateProps<T> {
+  data: T;
+  isLoading: boolean;
+  error: Error | null;
+}
+
+const initialState: StateProps<CategoryProps[]> = {
+  data: [],
   isLoading: false,
   error: null,
-} as any;
+};
 
 const categorySlice = createSlice({
   name: "category",

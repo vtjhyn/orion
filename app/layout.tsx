@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { Providers } from "@/store/provider";
+import SideNav from "@/components/Sidenav";
 
 const font = Montserrat({ subsets: ["latin"] });
 
@@ -18,11 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${font.className} bg-color4`}>
-        <Providers>
+      <body className={`${font.className} bg-coor4`}>
+      <Providers>
+        <div className="flex flex-col w-screen h-screen">
           <Navbar />
-          <div className="h-screen mx-4 pt-12">{children}</div>
-        </Providers>
+          {children}
+        </div>
+      </Providers>
       </body>
     </html>
   );
