@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  imgUrl           String?
   name             String
   email            String    @unique
   hashedPassword   String
@@ -21,16 +22,36 @@ model User {
 
 model Role {
   id     String    @id @default(auto()) @map("_id") @db.ObjectId
+  imgUrl String?
   name   String    @unique
   users  User[]    // Menambahkan relasi ke pengguna dengan peran ini
+  modules  ModuleList[]
+}
+
+model ModuleList {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  roleId    String   @db.ObjectId
+  moduleId  String   @db.ObjectId
+  role      Role  @relation(fields: [roleId], references: [id])
+  modules   ModuleItem @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+}
+
+model ModuleItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  imgUrl    String?
+  name      String
+  roles  ModuleList[]
 }
 
 model Product {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  imgUrl      String?
+  sku         String?
   name        String
   description String?
-  price       Int
-  quantity    Int
+  cost        Int?
+  quantity    Int?
   unitId      String   @db.ObjectId
   unit        Unit     @relation(fields: [unitId], references: [id]) // Menyimpan satuan item (misalnya, kg, pcs, dll) dengan relasi opsional
   categoryId  String   @db.ObjectId
@@ -39,16 +60,28 @@ model Product {
   materials   ProductMaterial[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  variants    Variant[]
+}
+
+model Variant {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  price     Int
+  productId String   @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Category {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  imgUrl   String?
   name     String
   products Product[] // Ini mengaitkan kategori dengan produk
 }
 
 model Unit {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  imgUrl      String?
   name        String
   products    Product[] // Ini mengaitkan unit dengan produk
   materials   Material[]
@@ -56,6 +89,7 @@ model Unit {
 
 model Material {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  imgUrl    String?
   name      String
   quantity  Int
   unitId    String   @db.ObjectId
@@ -105,6 +139,7 @@ model Payment {
 
 model PaymentMethod {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  imgUrl      String?
   name        String
   description String?
   payments    Payment[] 

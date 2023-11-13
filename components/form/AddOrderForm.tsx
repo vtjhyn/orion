@@ -7,6 +7,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct } from "@/store/slice/productSlice";
 import { AppDispatch, RootState } from "@/store/store";
+import Loader from "../Loader";
 
 const AddOrderForm = () => {
   const [quantity, setQuantity] = useState(1);
@@ -56,7 +57,7 @@ const AddOrderForm = () => {
   return (
     <div className="">
       {productLoading ? (
-        <p>Loading...</p>
+        <Loader />
       ) : (
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -66,29 +67,6 @@ const AddOrderForm = () => {
           <div className="w-full flex justify-between items-center gap-4">
             <p className="font-semibold w-[40%]">Product Name</p>
             <div className="w-full flex items-center gap-2">
-              <select
-                {...register("productId")}
-                className="border h-full w-full p-2 text-center"
-                required
-                onChange={(e) => {
-                  const selectedProductId = e.target.value;
-                  const selectedProduct = products.find(
-                    (product) => product.id === selectedProductId
-                  );
-                  if (selectedProduct) {
-                    setSelectedProductPrice(selectedProduct.price);
-                  } else {
-                    setSelectedProductPrice(null);
-                  }
-                }}
-              >
-                <option>Select</option>
-                {products?.map((product: any) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
           <Input

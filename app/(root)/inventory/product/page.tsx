@@ -10,14 +10,25 @@ import {
 } from "@/store/slice/productSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
-import Button from "@/components/Button";
+
+import Image from "next/image";
+import Loader from "@/components/Loader";
+import Container from "@/components/Container";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 const ProductPage = () => {
   const router = useRouter();
   const ref = useRef(false);
   const { data, isLoading } = useSelector((state: RootState) => state.product);
   const dispatch = useDispatch<AppDispatch>();
-  
 
   useEffect(() => {
     if (ref.current === false) {
@@ -48,35 +59,66 @@ const ProductPage = () => {
   console.log(data);
 
   return (
-    <div className="h-full flex-col justify-center items-center">
+    <>
       {isLoading ? (
-        <div className="h-full flex items-center justify-center">
-          Loading...
-        </div>
+        <Loader />
       ) : (
         <div>
           <div className="w-[180px] ">
             <Button
-              label="Add Product"
+              variant="test"
               onClick={() => router.push("/inventory/product/addproduct")}
-            />
+            >
+              Add Product
+            </Button>
           </div>
-          {data?.map((data: ProductProps) => (
-            <div className="outline my-4" key={data.id}>
-              <div>Nama : {data.name}</div>
-              <div>Deskripsi : {data.description}</div>
-              <div>Harga : {data.price}</div>
-              <div>
-                Jumlah : {data.quantity} <span>{data.unit?.name}</span>
-              </div>
-              <div>Kategori : {data.category?.name}</div>
-              <Button label="Edit" onClick={() => onEdit(data)} />
-              <Button label="Delete" onClick={() => onDelete(data)} />
-            </div>
-          ))}
+          <Container>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Unit</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead className="w-[150px]">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data?.map((data) => (
+                  <TableRow key={data.id}>
+                    <TableCell className="font-medium">
+                      {data.imgUrl && (
+                        <Image
+                          alt="Upload"
+                          style={{ objectFit: "cover" }}
+                          src={data.imgUrl}
+                          width={100}
+                          height={100}
+                          className="rounded-full h-[100px] w-[100px] mx-auto"
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>{data.name}</TableCell>
+                    <TableCell>{data.description}</TableCell>
+                    <TableCell>{data.unit.name}</TableCell>
+                    <TableCell>{data.category.name}</TableCell>
+                    <TableCell>
+                      <Button variant="test" onClick={() => onEdit(data)}>
+                        Edit
+                      </Button>
+                      <Button variant="test" onClick={() => onDelete(data)}>
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Container>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

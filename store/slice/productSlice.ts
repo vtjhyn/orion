@@ -3,10 +3,11 @@ import axios from "axios";
 
 export interface ProductProps {
   id: string;
+  imgUrl: string;
   name: string;
-  description: string | null;
-  price: number;
-  quantity: number;
+  description?: string;
+  cost?: string;
+  quantity?: number;
   unitId: string;
   categoryId: string;
   createdAt: Date;

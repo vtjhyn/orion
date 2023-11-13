@@ -9,6 +9,7 @@ import { AppDispatch, RootState } from "@/store/store";
 import { getRole } from "@/store/slice/roleSlice";
 import { UserProps, editUser } from "@/store/slice/userSlice";
 import ChangePasswordModal from "../ChangePasswordModal";
+import Loader from "../Loader";
 
 const EditUserForm = ({
   user,
@@ -76,7 +77,7 @@ const EditUserForm = ({
   return (
     <div className="">
       {roleLoading || isLoading ? (
-        <p>Loading...</p>
+        <Loader />
       ) : (
         <form
           onSubmit={handleSubmit(onSubmit)}

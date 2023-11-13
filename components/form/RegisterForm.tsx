@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { getRole } from "@/store/slice/roleSlice";
 import { useEffect, useRef } from "react";
 import { addUser } from "@/store/slice/userSlice";
+import Loader from "../Loader";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -51,7 +52,7 @@ const RegisterForm = () => {
   return (
     <div className="flex flex-col justify-center items-center gap-6">
       {roleLoading ? (
-        <p>Loading...</p>
+        <Loader />
       ) : (
         <>
           <form

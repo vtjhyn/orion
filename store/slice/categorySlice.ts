@@ -2,7 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface CategoryProps {
-  id: number;
+  id: string;
+  imgUrl?: string;
   name: string;
 }
 
@@ -22,7 +23,7 @@ export const addCategory = createAsyncThunk<CategoryProps, Partial<CategoryProps
   "category/addCategory",
   async (item, thunkAPI) => {
     try {
-      const response = await axios.post("/api/category", {name: item});
+      const response = await axios.post("/api/category", item);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);

@@ -22,7 +22,7 @@ export const addUnit = createAsyncThunk<UnitProps, Partial<UnitProps>>(
   "unit/addUnit",
   async (item, thunkAPI) => {
     try {
-      const response = await axios.post("/api/unit", { name: item });
+      const response = await axios.post("/api/unit", { name: item.name });
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);

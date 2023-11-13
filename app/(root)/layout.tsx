@@ -22,7 +22,7 @@ export default async function RootLayout({
   console.log(currentUser)
   return (
     <html lang="en">
-      <body className={`${font.className} bg-color4`}>
+      <body className={`${font.className} bg-[#F2F2F2]`}>
         <Providers>
           <Navbar
             currentUser={currentUser as UserProps}

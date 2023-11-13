@@ -14,12 +14,14 @@ import { SettingOutlined } from "@ant-design/icons";
 import ImageUpload from "../ImageUpload";
 import Loader from "../Loader";
 
-const EditProductForm = ({
-  products,
-  isLoading,
-}: {
+interface ProductFormProps {
   products: ProductProps[];
   isLoading: Boolean;
+}
+
+const ProductForm: React.FC<ProductFormProps> = ({
+  products,
+  isLoading,
 }) => {
   const { data: units, isLoading: unitLoading } = useSelector(
     (state: RootState) => state.unit
@@ -221,4 +223,4 @@ const EditProductForm = ({
   );
 };
 
-export default EditProductForm;
+export default ProductForm;

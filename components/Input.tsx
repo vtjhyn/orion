@@ -12,7 +12,7 @@ interface InputProps {
   register: UseFormRegister<FieldValues>;
   errors: FieldErrors | any;
   validationSchema?: any;
-  onChange: (value: any) => void;
+  onChange?: (value: any) => void;
 }
 
 const Input: React.FC<InputProps> = ({

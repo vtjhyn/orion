@@ -2,7 +2,7 @@ import prisma from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 
 interface IParams {
-  productId: string;
+  materialId: string;
 }
 
 export async function DELETE(
@@ -10,15 +10,25 @@ export async function DELETE(
   { params }: { params: IParams }
 ) {
   try {
-    const { productId } = params;
+    const { materialId } = params;
 
-    const product = await prisma.product.delete({
+    const existingMaterial = await prisma.material.findUnique({
       where: {
-        id: productId,
+        id: materialId,
       },
     });
 
-    return NextResponse.json(product);
+    if (!existingMaterial) {
+      return NextResponse.json("Material not found", { status: 404 });
+    }
+
+    const material = await prisma.material.delete({
+      where: {
+        id: materialId,
+      },
+    });
+
+    return NextResponse.json(material);
   } catch (error) {
     console.error("Error handling DELETE request:", error);
     return NextResponse.json("Internal Server Error", { status: 500 });
@@ -27,62 +37,53 @@ export async function DELETE(
   }
 }
 
-export async function POST(
-  request: Request,
-  { params }: { params: IParams }
-) {
+export async function POST(request: Request, { params }: { params: IParams }) {
   try {
-    const { productId } = params;
+    const { materialId } = params;
     const body = await request.json();
-    const { imgUrl, name, description, unitId, categoryId } = body;
+    const { imgUrl, name, quantity, unitId } = body;
 
-    const product = await prisma.product.update({
+    const material = await prisma.material.update({
       where: {
-        id: productId,
+        id: materialId,
       },
       data: {
         imgUrl,
         name,
-        description,
+        quantity,
         unit: {
           connect: {
             id: unitId,
           },
         },
-        category: {
-          connect: {
-            id: categoryId,
-          },
-        },
       },
     });
 
-    return NextResponse.json(product);
+    await prisma.$disconnect();
+    return NextResponse.json(material);
   } catch (error) {
     console.error("Error handling POST request:", error);
     return NextResponse.json("Internal Server Error", { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: IParams }
-) {
+export async function GET(request: Request, { params }: { params: IParams }) {
   try {
-    const { productId } = params;
-    const products = await prisma.product.findUnique({
+    const { materialId } = params;
+    const materials = await prisma.material.findUnique({
       where: {
-        id: productId,
+        id: materialId,
       },
       include: {
         unit: true,
-        category: true,
       },
     });
 
-    return NextResponse.json(products);
+    if (!materials) {
+      return NextResponse.json("Material not found", { status: 404 });
+    }
+
+    return NextResponse.json(materials);
   } catch (error) {
     console.error("Error handling GET request:", error);
     return NextResponse.json("Internal Server Error", { status: 500 });

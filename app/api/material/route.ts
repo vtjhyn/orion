@@ -1,30 +1,25 @@
 import prisma from "@/lib/prismadb";
-import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, password, roleId } = body;
+    const { imgUrl, name, quantity, unitId } = body;
 
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const user = await prisma.user.create({
+    const material = await prisma.material.create({
       data: {
+        imgUrl,
         name,
-        email,
-        hashedPassword,
-        role: {
+        quantity,
+        unit: {
           connect: {
-            id: roleId,
+            id: unitId,
           },
         },
       },
-      include: {
-        role: true,
-      },
     });
 
-    return NextResponse.json(user);
+    return NextResponse.json(material);
   } catch (error) {
     console.error("Error handling POST request:", error);
     return NextResponse.json("Internal Server Error", { status: 500 });
@@ -33,15 +28,15 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const users = await prisma.user.findMany({
+    const materials = await prisma.material.findMany({
       include: {
-        role: true,
+        unit: true,
       },
     });
 
-    return NextResponse.json(users);
+    return NextResponse.json(materials);
   } catch (error) {
     console.error("Error handling GET request:", error);
     return NextResponse.json("Internal Server Error", { status: 500 });

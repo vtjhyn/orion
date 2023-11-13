@@ -11,6 +11,9 @@ import { AppDispatch, RootState } from "@/store/store";
 import { UnitProps, getUnit } from "@/store/slice/unitsSlice";
 import { CategoryProps, getCategory } from "@/store/slice/categorySlice";
 import { SettingOutlined } from "@ant-design/icons";
+import ImageUpload from "../ImageUpload";
+import Loader from "../Loader";
+import Container from "../Container";
 
 const AddProductForm = () => {
   const { data: units, isLoading: unitLoading } = useSelector(
@@ -42,27 +45,40 @@ const AddProductForm = () => {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FieldValues>();
 
+  const setCustomValue = (id: string, value: any) => {
+    setValue(id, value, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+  };
+
+  const imgUrl = watch("imgUrl");
+
   const onSubmit = (data: any) => {
-    data.price = parseInt(data.price);
+    data.cost = parseInt(data.cost);
     data.quantity = parseInt(data.quantity);
     dispatch(addProduct(data))
       .then((result) => {
         console.log("Product added:", result.payload);
-        // Buat notif
+        // Buat notifikasi
       })
       .catch((error) => {
         console.error("Error adding product:", error);
+        // Handle error and show notification
       });
   };
 
   const handleUnitSelectChange = (e: React.MouseEvent<HTMLDivElement>) => {
     setShowModal(true);
     setModalType("Unit");
-    setData(units)
-    setLoading(unitLoading)
+    setData(units);
+    setLoading(unitLoading);
   };
 
   const handleCategorySelectChange = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -85,92 +101,101 @@ const AddProductForm = () => {
   return (
     <div className="">
       {unitLoading || categoryLoading ? (
-        <p>Loading...</p>
+        <Loader />
       ) : (
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="w-[500px] flex flex-col gap-8"
-          id="productform"
-        >
-          <Input
-            id="name"
-            label="Product Name"
-            disabled={false}
-            register={register}
-            errors={errors}
-            required
-          />
-          <Input
-            id="description"
-            label="Description"
-            disabled={false}
-            register={register}
-            errors={errors}
-          />
-          <Input
-            id="price"
-            label="Price"
-            type="number"
-            disabled={false}
-            register={register}
-            errors={errors}
-            required
-          />
-          <Input
-            id="quantity"
-            label="Quantity"
-            type="number"
-            disabled={false}
-            register={register}
-            errors={errors}
-            required
-          />
-          <div className="w-full flex justify-between items-center gap-4">
-            <p className="font-semibold">Unit</p>
-            <div className="w-[50%] flex items-center gap-2">
-              <select
-                {...register("unitId")}
-                className="border h-full w-full p-2 text-center"
-                required
-              >
-                <option value="">Select</option>
-                {units?.map((unit: any) => (
-                  <option key={unit.id} value={unit.id}>
-                    {unit.name}
-                  </option>
-                ))}
-              </select>
-              <div onClick={handleUnitSelectChange}>
-                <SettingOutlined className="hover:cursor-pointer hover:scale-110" />
+        <Container>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="w-[500px] flex flex-col gap-6"
+            id="productform"
+          >
+            <div>
+              <ImageUpload
+                value={imgUrl}
+                onChange={(value) => setCustomValue("imgUrl", value)}
+              />
+            </div>
+            <Input
+              id="name"
+              label="Product Name"
+              disabled={false}
+              register={register}
+              errors={errors}
+              required
+            />
+            <Input
+              id="description"
+              label="Description"
+              disabled={false}
+              register={register}
+              errors={errors}
+            />
+            <Input
+              id="cost"
+              label="Cost"
+              type="number"
+              disabled={false}
+              register={register}
+              errors={errors}
+              required
+            />
+            <Input
+              id="quantity"
+              label="Quantity"
+              type="number"
+              disabled={false}
+              register={register}
+              errors={errors}
+              required
+            />
+            <div className="w-full flex justify-between items-center gap-4">
+              <p className="font-semibold">Unit</p>
+              <div className="w-[50%] flex items-center gap-2">
+                <select
+                  {...register("unitId")}
+                  className="border h-full w-full p-2 text-center"
+                  required
+                >
+                  <option value="">Select</option>
+                  {units?.map((unit: any) => (
+                    <option key={unit.id} value={unit.id}>
+                      {unit.name}
+                    </option>
+                  ))}
+                </select>
+                <div onClick={handleUnitSelectChange}>
+                  <SettingOutlined className="hover:cursor-pointer hover:scale-110" />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="w-full flex justify-between items-center gap-4">
-            <p className="font-semibold w-[40%]">Category</p>
-            <div className="w-[50%] flex items-center gap-2">
-              <select
-                {...register("categoryId")}
-                className="border h-full w-full p-2 text-center"
-                required
-              >
-                <option value="">Select</option>
-                {categories?.map((category: any) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              <div onClick={handleCategorySelectChange}>
-                <SettingOutlined className="hover:cursor-pointer hover:scale-110" />
+            <div className="w-full flex justify-between items-center gap-4">
+              <p className="font-semibold w-[40%]">Category</p>
+              <div className="w-[50%] flex items-center gap-2">
+                <select
+                  {...register("categoryId")}
+                  className="border h-full w-full p-2 text-center"
+                  required
+                >
+                  <option value="">Select</option>
+                  {categories?.map((category: any) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                <div onClick={handleCategorySelectChange}>
+                  <SettingOutlined className="hover:cursor-pointer hover:scale-110" />
+                </div>
               </div>
             </div>
-          </div>
-          <Button
-            label="Save"
-            onClick={() => {}}
-            disabled={isLoading ? true : false}
-          />
-        </form>
+            <Button
+              label="Save"
+              type="submit"
+              disabled={isLoading ? true : false}
+              onClick={() => {}}
+            />
+          </form>
+        </Container>
       )}
 
       {showModal && (
@@ -183,7 +208,6 @@ const AddProductForm = () => {
             onClose={closeModal}
             id={modalType.toLowerCase()}
             data={data}
-
           />
         </div>
       )}

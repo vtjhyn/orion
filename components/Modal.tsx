@@ -16,14 +16,17 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ onClose, title, id, data }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [mode, setMode] = useState("");
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState({
+    name: '',
+    imgUrl: 'https://e7.pngegg.com/pngimages/829/733/png-clipart-logo-brand-product-trademark-font-not-found-logo-brand-thumbnail.png'
+  });
   const [editItem, setEditItem] =useState<UnitProps | CategoryProps>();
 
 
 
   const onSave = () => {
     if (id === "category") {
-      dispatch(addCategory(value as Partial<CategoryProps>))
+      dispatch(addCategory(value))
         .then((result: any) => {
           console.log("Category added:", result.payload);
           // Buat notif
@@ -34,7 +37,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, title, id, data }) => {
         });
     }
     if (id === "unit") {
-      dispatch(addUnit(value as Partial<UnitProps>))
+      dispatch(addUnit(value))
         .then((result: any) => {
           console.log("Unit added:", result.payload);
           // Buat notif
@@ -48,13 +51,13 @@ const Modal: React.FC<ModalProps> = ({ onClose, title, id, data }) => {
 
   const handleEdit = (data: UnitProps | CategoryProps) => {
     setMode("Edit")
-    setValue(data.name);
+    setValue({...value,name: data.name});
     setEditItem(data)
   };
 
   const onEdit = (data: any) => {
     if (id === "unit") {
-      dispatch(editUnit({ id: data.id, name: value }))
+      dispatch(editUnit({ id: data.id, name: value.name }))
         .then((result: any) => {
           console.log("Unit editted:", result.payload);
           // Buat notif
@@ -65,7 +68,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, title, id, data }) => {
         });
     }
     if (id === "category") {
-      dispatch(editCategory({ id: data.id, name: value }))
+      dispatch(editCategory({ id: data.id, name: value.name }))
         .then((result: any) => {
           console.log("Category editted:", result.payload);
           // Buat notif
@@ -146,9 +149,9 @@ const Modal: React.FC<ModalProps> = ({ onClose, title, id, data }) => {
         <input
           type="text"
           className="w-[70%] border p-2 rounded-md"
-          placeholder={value}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
+          placeholder={value.name}
+          value={value.name}
+          onChange={(e) => setValue({ ...value, name: e.target.value })}
           required
         />
       </div>

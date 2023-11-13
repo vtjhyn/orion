@@ -12,6 +12,7 @@ import { AppDispatch, RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { UserProps, deleteUser, getUser, getUserById } from "@/store/slice/userSlice";
+import Loader from "@/components/Loader";
 
 const UserSettingPage = () => {
   const router = useRouter();
@@ -52,9 +53,7 @@ const UserSettingPage = () => {
   return (
     <div className="h-full flex-col justify-center items-center">
       {isLoading ? (
-        <div className="h-full flex items-center justify-center">
-          Loading...
-        </div>
+        <Loader />
       ) : (
         <div>
           <div className="w-[180px] ">
